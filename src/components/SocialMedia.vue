@@ -15,7 +15,7 @@ import { socialsData } from "../data/data";
       </span>
     </div>
     <a :href="social.href" target="_blank" rel="noopener noreferrer"
-      class="px-4 py-1.5 bg-[#171717] text-white text-[11px] font-bold uppercase tracking-wider rounded-lg hover:bg-neutral-800 transition-colors dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200">
+      class="px-4 py-1.5 bg-[#171717] text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-neutral-800 transition-colors dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200">
       {{ social.buttonLabel }}
     </a>
   </div>

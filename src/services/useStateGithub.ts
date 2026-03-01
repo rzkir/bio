@@ -1,23 +1,6 @@
 import { computed, ref, watch } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 
-// Di dev pakai proxy Vite (/api → rizkiramadhan.web.id) untuk hindari CORS
-const API_BASE =
-  import.meta.env.DEV
-    ? "/api/github-contributions"
-    : "https://rizkiramadhan.web.id/api/github-contributions";
-
-export type RepoContribution = {
-  nameWithOwner: string;
-  url: string;
-  totalCount: number;
-};
-
-export type GithubContributionsResponse = {
-  totalCommitContributions: number;
-  repos: RepoContribution[];
-};
-
 export const CURRENT_YEAR = new Date().getFullYear();
 export const MAX_DOTS = 52;
 export const INITIAL_REPOS = 10;
@@ -29,6 +12,8 @@ export const YEAR_OPTIONS: { value: "last" | number; label: string }[] = [
     label: String(CURRENT_YEAR - i),
   })),
 ];
+
+const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN as string | undefined;
 
 function getDateRange(year: "last" | number): { from: string; to: string } {
   const to = new Date();
@@ -49,27 +34,102 @@ function getDateRange(year: "last" | number): { from: string; to: string } {
 async function fetchGithubContributions(
   username: string,
   from: string,
-  to: string
+  to: string,
 ): Promise<GithubContributionsResponse> {
-  const url = new URL(API_BASE);
-  url.searchParams.set("username", username);
-  url.searchParams.set("from", from);
-  url.searchParams.set("to", to);
-
-  const res = await fetch(url.toString());
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || `HTTP ${res.status}`);
+  if (!GITHUB_TOKEN) {
+    throw new Error("GitHub token tidak dikonfigurasi (VITE_GITHUB_TOKEN).");
   }
-  return res.json();
+
+  const response = await fetch("https://api.github.com/graphql", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
+    },
+    body: JSON.stringify({
+      query: `
+        query ($login: String!, $from: DateTime!, $to: DateTime!) {
+          user(login: $login) {
+            contributionsCollection(from: $from, to: $to) {
+              totalCommitContributions
+              commitContributionsByRepository(maxRepositories: 100) {
+                contributions {
+                  totalCount
+                }
+                repository {
+                  nameWithOwner
+                  url
+                }
+              }
+              contributionCalendar {
+                weeks {
+                  contributionDays {
+                    date
+                    contributionCount
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        login: username,
+        from: `${from}T00:00:00Z`,
+        to: `${to}T23:59:59Z`,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`GitHub API error: ${response.status}`);
+  }
+
+  const json: any = await response.json();
+
+  if (json.errors && json.errors.length > 0) {
+    throw new Error(json.errors[0].message || "GitHub API error");
+  }
+
+  const collection = json.data?.user?.contributionsCollection ?? {
+    totalCommitContributions: 0,
+    commitContributionsByRepository: [],
+    contributionCalendar: { weeks: [] },
+  };
+
+  const repos: RepoContribution[] = (
+    collection.commitContributionsByRepository ?? []
+  ).map((item: any) => ({
+    nameWithOwner: item.repository.nameWithOwner,
+    url: item.repository.url,
+    totalCount: item.contributions.totalCount,
+  }));
+
+  const calendar: DayContribution[] = [];
+  const weeks = collection.contributionCalendar?.weeks ?? [];
+
+  for (const week of weeks) {
+    for (const day of week.contributionDays ?? []) {
+      calendar.push({
+        date: day.date,
+        count: day.contributionCount,
+      });
+    }
+  }
+
+  return {
+    totalCommitContributions: collection.totalCommitContributions ?? 0,
+    repos,
+    calendar,
+  };
 }
 
 export function useStateGithub(username = "rzkir") {
   const selectedYear = ref<"last" | number>("last");
   const showAllRepos = ref(false);
 
-  const queryKey = computed(() =>
-    ["github-contributions", username, selectedYear.value] as const
+  const queryKey = computed(
+    () => ["github-contributions", username, selectedYear.value] as const,
   );
 
   const query = useQuery({
@@ -85,14 +145,17 @@ export function useStateGithub(username = "rzkir") {
   });
 
   const totalContributions = computed(
-    () => query.data.value?.totalCommitContributions ?? 0
+    () => query.data.value?.totalCommitContributions ?? 0,
   );
   const repos = computed(() => query.data.value?.repos ?? []);
+  const calendarValues = computed(
+    () => query.data.value?.calendar ?? [],
+  );
 
   const yearLabel = computed(() =>
     selectedYear.value === "last"
       ? "Last 365 days"
-      : `Year ${selectedYear.value}`
+      : `Year ${selectedYear.value}`,
   );
 
   return {
@@ -107,10 +170,11 @@ export function useStateGithub(username = "rzkir") {
     data: computed(() => query.data.value),
     loading: computed(() => query.isPending.value),
     error: computed(() =>
-      query.error.value ? (query.error.value as Error).message : null
+      query.error.value ? (query.error.value as Error).message : null,
     ),
     totalContributions,
     repos,
+    calendarValues,
     yearLabel,
     refetch: query.refetch,
   };
