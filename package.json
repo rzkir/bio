@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
+    "preview": "npm run build-only && wrangler dev",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build"
+    "type-check": "vue-tsc --build",
+    "deploy": "npm run build-only && wrangler deploy"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",
@@ -19,6 +20,7 @@
     "vue3-calendar-heatmap": "^2.0.5"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.25.6",
     "@tsconfig/node24": "^24.0.4",
     "@types/node": "^24.11.0",
     "@vitejs/plugin-vue": "^6.0.4",
@@ -27,7 +29,8 @@
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.6",
-    "vue-tsc": "^3.2.5"
+    "vue-tsc": "^3.2.5",
+    "wrangler": "^4.69.0"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
