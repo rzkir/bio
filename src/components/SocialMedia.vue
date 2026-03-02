@@ -4,7 +4,9 @@ import { socialsData } from "../data/data";
 
 <template>
   <div v-for="social in socialsData" :key="social.id"
-    class="link-card flex items-center p-4 bg-white border border-neutral-200 rounded-2xl shadow-[0_2px_4px_rgba(0,0,0,0.02)] dark:bg-neutral-900 dark:border-neutral-700">
+    class="link-card group flex items-center p-4 rounded-2xl shadow-[0_2px_4px_rgba(0,0,0,0.02)]" :style="{
+      border: '1px solid var(--color-card-border)'
+    }">
     <div class="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center" :class="social.iconBgClass">
       <iconify-icon :icon="social.icon" class="text-xl" />
     </div>
@@ -15,7 +17,8 @@ import { socialsData } from "../data/data";
       </span>
     </div>
     <a :href="social.href" target="_blank" rel="noopener noreferrer"
-      class="px-4 py-1.5 bg-[#171717] text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-neutral-800 transition-colors dark:bg-neutral-50 dark:text-neutral-950 dark:hover:bg-neutral-200">
+      class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors hover:opacity-90"
+      style="background-color: var(--color-button); color: var(--color-button-text);">
       {{ social.buttonLabel }}
     </a>
   </div>

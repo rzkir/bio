@@ -1,0 +1,39 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rizki Ramadhan  Link in bio">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1220" />
+      <stop offset="1" stop-color="#111827" />
+    </linearGradient>
+    <linearGradient id="accent" x1="180" y1="220" x2="1060" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22C55E" stop-opacity="0.9" />
+      <stop offset="0.5" stop-color="#38BDF8" stop-opacity="0.85" />
+      <stop offset="1" stop-color="#A78BFA" stop-opacity="0.85" />
+    </linearGradient>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox">
+      <feGaussianBlur stdDeviation="40" />
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <g filter="url(#blur)" opacity="0.9">
+    <circle cx="320" cy="190" r="160" fill="url(#accent)" />
+    <circle cx="920" cy="420" r="190" fill="url(#accent)" />
+  </g>
+
+  <rect x="86" y="86" width="1028" height="458" rx="28" fill="#0B1220" fill-opacity="0.55" stroke="#FFFFFF" stroke-opacity="0.10" />
+
+  <text x="140" y="270" fill="#FFFFFF" font-family="Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="64" font-weight="700">
+    Rizki Ramadhan
+  </text>
+  <text x="140" y="340" fill="#D1D5DB" font-family="Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="30" font-weight="500">
+    Link in bio  portfolio, tools, dan social media
+  </text>
+
+  <g transform="translate(140 390)">
+    <rect x="0" y="0" width="260" height="56" rx="14" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.14" />
+    <text x="24" y="38" fill="#FFFFFF" font-family="Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="24" font-weight="600">
+      rzkir.bio
+    </text>
+  </g>
+</svg>

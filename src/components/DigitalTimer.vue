@@ -1,10 +1,23 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
-import { useFormattedTime } from "./ui/Calendar";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+
 const now = ref(new Date());
 let timerId: number | null = null;
 
-const formattedTime = useFormattedTime();
+const pad = (n: number) => n.toString().padStart(2, "0");
+
+const jam = computed(() => pad(now.value.getHours()));
+const menit = computed(() => pad(now.value.getMinutes()));
+const detik = computed(() => pad(now.value.getSeconds()));
+
+const formattedDate = computed(() =>
+    now.value.toLocaleDateString("id-ID", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    })
+);
 
 onMounted(() => {
     timerId = window.setInterval(() => {
@@ -27,14 +40,22 @@ onUnmounted(() => {
 
         <div class="w-full">
             <div class="flex flex-col items-center gap-4">
-                <Transition name="time-fade" mode="out-in">
-                    <span :key="formattedTime"
-                        class="font-mono text-3xl leading-none tracking-[0.3em] text-neutral-900 dark:text-neutral-50">
-                        {{ formattedTime }}
-                    </span>
-                </Transition>
-                <span class="text-xs uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500">
-                    {{ formattedTime }}
+                <div
+                    class="font-mono text-3xl leading-none tracking-[0.3em] text-neutral-900 dark:text-neutral-50 inline-flex items-baseline gap-0.5">
+                    <Transition name="time-fade" mode="out-in">
+                        <span :key="jam" class="inline-block tabular-nums">{{ jam }}</span>
+                    </Transition>
+                    <span class="opacity-60">:</span>
+                    <Transition name="time-fade" mode="out-in">
+                        <span :key="menit" class="inline-block tabular-nums">{{ menit }}</span>
+                    </Transition>
+                    <span class="opacity-60">:</span>
+                    <Transition name="time-fade" mode="out-in">
+                        <span :key="detik" class="inline-block tabular-nums">{{ detik }}</span>
+                    </Transition>
+                </div>
+                <span class="text-xs uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400 mt-2">
+                    {{ formattedDate }}
                 </span>
             </div>
         </div>

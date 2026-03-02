@@ -15,14 +15,22 @@ export const YEAR_OPTIONS: { value: "last" | number; label: string }[] = [
 
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN as string | undefined;
 
+/** Format date as YYYY-MM-DD in local time (matches GitHub profile "today" boundary). */
+function toLocalDateString(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 function getDateRange(year: "last" | number): { from: string; to: string } {
   const to = new Date();
   if (year === "last") {
     const from = new Date(to);
     from.setDate(from.getDate() - 365);
     return {
-      from: from.toISOString().slice(0, 10),
-      to: to.toISOString().slice(0, 10),
+      from: toLocalDateString(from),
+      to: toLocalDateString(to),
     };
   }
   return {
@@ -108,10 +116,12 @@ async function fetchGithubContributions(
   const calendar: DayContribution[] = [];
   const weeks = collection.contributionCalendar?.weeks ?? [];
 
+  // Use date at noon local so heatmap's keyDayParser (getFullYear/getMonth/getDate) matches
+  // the same calendar day as GitHub profile, regardless of user timezone.
   for (const week of weeks) {
     for (const day of week.contributionDays ?? []) {
       calendar.push({
-        date: day.date,
+        date: `${day.date}T12:00:00`,
         count: day.contributionCount,
       });
     }

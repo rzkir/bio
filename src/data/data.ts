@@ -113,11 +113,11 @@ export const socialsData: SocialItem[] = [
   {
     id: "youtube",
     name: "YouTube",
-    subtitle: "@rzkir.20",
+    subtitle: "@codingwithrizki",
     icon: "lucide:youtube",
     iconBgClass: "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400",
     buttonLabel: "Follow",
-    href: "https://www.youtube.com/@rzkir.20",
+    href: "https://www.youtube.com/@codingwithrizki",
   },
   {
     id: "linkedin",
