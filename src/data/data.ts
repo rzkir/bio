@@ -1,26 +1,6 @@
-export type LinkItemVariant = "default" | "primary";
-
-export interface LinkItem {
-  href: string;
-  icon: string;
-  title: string;
-  description: string;
-  variant?: LinkItemVariant;
-}
-
-export interface SocialItem {
-  id: string;
-  name: string;
-  subtitle: string;
-  icon: string;
-  iconBgClass: string;
-  buttonLabel: string;
-  href: string;
-}
-
 export const linksData: LinkItem[] = [
   {
-    href: "https://rizkiramadhan.web.id",
+    href: "https://rizkiramadhan.biz.id",
     icon: "lucide:globe",
     title: "Portfolio",
     description: "My Portfolio",
@@ -62,7 +42,7 @@ export const linksData: LinkItem[] = [
     variant: "default",
   },
   {
-    href: "mailto:hallo@rizkiramadhan.web.id",
+    href: "mailto:hallo@rizkiramadhan.biz.id",
     icon: "lucide:mail",
     title: "Work with me",
     description: "Open for new projects and collaborations",
